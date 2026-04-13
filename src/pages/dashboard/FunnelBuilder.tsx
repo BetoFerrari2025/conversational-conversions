@@ -1,49 +1,19 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   ArrowLeft, Save, Plus, Trash2, GripVertical,
-  Type, Image, Video, MousePointerClick, FormInput, Clock, ChevronUp, ChevronDown
+  ChevronUp, ChevronDown, Pencil
 } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
-
-interface FunnelBlock {
-  id: string;
-  funnel_id: string;
-  type: string;
-  content: Record<string, any>;
-  sort_order: number;
-  position_x: number;
-  position_y: number;
-  next_block_id: string | null;
-  created_at: string;
-}
-
-const BLOCK_TYPES = [
-  { type: "text", label: "Texto", icon: Type, color: "text-blue-400" },
-  { type: "image", label: "Imagem", icon: Image, color: "text-green-400" },
-  { type: "video", label: "Vídeo", icon: Video, color: "text-purple-400" },
-  { type: "buttons", label: "Botões", icon: MousePointerClick, color: "text-yellow-400" },
-  { type: "input", label: "Input", icon: FormInput, color: "text-pink-400" },
-  { type: "delay", label: "Delay", icon: Clock, color: "text-orange-400" },
-];
-
-const defaultContent: Record<string, Record<string, any>> = {
-  text: { message: "" },
-  image: { url: "", caption: "" },
-  video: { url: "", caption: "" },
-  buttons: { message: "", buttons: [{ label: "Opção 1", value: "1" }] },
-  input: { placeholder: "Digite aqui...", variable: "resposta", inputType: "text" },
-  delay: { seconds: 2 },
-};
+import { BLOCK_TYPES, defaultContent, type FunnelBlock } from "@/components/funnel-builder/BlockTypes";
+import { BlockPreview } from "@/components/funnel-builder/BlockPreview";
+import { BlockEditor } from "@/components/funnel-builder/BlockEditor";
 
 export default function FunnelBuilder() {
   const { funnelId } = useParams();
@@ -86,7 +56,9 @@ export default function FunnelBuilder() {
       .select()
       .single();
     if (data) {
-      setBlocks(prev => [...prev, { ...data, content: (data.content as Record<string, any>) ?? {} }]);
+      const newBlock = { ...data, content: (data.content as Record<string, any>) ?? {} };
+      setBlocks(prev => [...prev, newBlock]);
+      setEditingBlock(newBlock);
       toast({ title: `Bloco "${BLOCK_TYPES.find(b => b.type === type)?.label}" adicionado` });
     }
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -95,6 +67,7 @@ export default function FunnelBuilder() {
   const deleteBlock = async (id: string) => {
     await supabase.from("funnel_blocks").delete().eq("id", id);
     setBlocks(prev => prev.filter(b => b.id !== id));
+    if (editingBlock?.id === id) setEditingBlock(null);
     toast({ title: "Bloco removido" });
   };
 
@@ -142,7 +115,6 @@ export default function FunnelBuilder() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard/funnels")}>
@@ -160,7 +132,6 @@ export default function FunnelBuilder() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
-        {/* Sidebar - Block palette */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Adicionar Bloco</h3>
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
@@ -179,7 +150,6 @@ export default function FunnelBuilder() {
           </div>
         </div>
 
-        {/* Main canvas */}
         <div className="space-y-3">
           {blocks.length === 0 ? (
             <Card className="glass border-dashed border-2 border-border/50 flex flex-col items-center justify-center py-16 text-center">
@@ -221,7 +191,7 @@ export default function FunnelBuilder() {
                         <ChevronDown className="h-3 w-3" />
                       </Button>
                       <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingBlock(block)}>
-                        <FormInput className="h-3 w-3" />
+                        <Pencil className="h-3 w-3" />
                       </Button>
                       <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => deleteBlock(block.id)}>
                         <Trash2 className="h-3 w-3" />
@@ -235,7 +205,6 @@ export default function FunnelBuilder() {
         </div>
       </div>
 
-      {/* Edit dialog */}
       <Dialog open={!!editingBlock} onOpenChange={(open) => !open && setEditingBlock(null)}>
         <DialogContent className="glass max-w-lg">
           <DialogHeader>
@@ -254,122 +223,4 @@ export default function FunnelBuilder() {
       </Dialog>
     </div>
   );
-}
-
-function BlockPreview({ block }: { block: FunnelBlock }) {
-  const c = block.content;
-  switch (block.type) {
-    case "text":
-      return <p className="text-sm text-muted-foreground truncate">{c.message || "Mensagem vazia..."}</p>;
-    case "image":
-      return <p className="text-sm text-muted-foreground truncate">{c.url || "Sem URL"}{c.caption ? ` — ${c.caption}` : ""}</p>;
-    case "video":
-      return <p className="text-sm text-muted-foreground truncate">{c.url || "Sem URL"}</p>;
-    case "buttons":
-      return (
-        <div className="flex flex-wrap gap-1">
-          {(c.buttons ?? []).map((btn: any, i: number) => (
-            <span key={i} className="text-xs px-2 py-0.5 rounded bg-primary/20 text-primary">{btn.label}</span>
-          ))}
-        </div>
-      );
-    case "input":
-      return <p className="text-sm text-muted-foreground">Variável: {c.variable || "resposta"} ({c.inputType || "text"})</p>;
-    case "delay":
-      return <p className="text-sm text-muted-foreground">{c.seconds || 0}s de espera</p>;
-    default:
-      return null;
-  }
-}
-
-function BlockEditor({ block, onChange }: { block: FunnelBlock; onChange: (content: Record<string, any>) => void }) {
-  const c = block.content;
-  const update = (key: string, value: any) => onChange({ ...c, [key]: value });
-
-  switch (block.type) {
-    case "text":
-      return (
-        <div className="space-y-3">
-          <Label>Mensagem</Label>
-          <Textarea value={c.message ?? ""} onChange={(e) => update("message", e.target.value)} placeholder="Digite a mensagem..." rows={4} />
-          <p className="text-xs text-muted-foreground">Use {"{{nome}}"} para variáveis</p>
-        </div>
-      );
-    case "image":
-      return (
-        <div className="space-y-3">
-          <Label>URL da Imagem</Label>
-          <Input value={c.url ?? ""} onChange={(e) => update("url", e.target.value)} placeholder="https://..." />
-          <Label>Legenda (opcional)</Label>
-          <Input value={c.caption ?? ""} onChange={(e) => update("caption", e.target.value)} placeholder="Legenda" />
-        </div>
-      );
-    case "video":
-      return (
-        <div className="space-y-3">
-          <Label>URL do Vídeo</Label>
-          <Input value={c.url ?? ""} onChange={(e) => update("url", e.target.value)} placeholder="https://youtube.com/..." />
-          <Label>Legenda (opcional)</Label>
-          <Input value={c.caption ?? ""} onChange={(e) => update("caption", e.target.value)} placeholder="Legenda" />
-        </div>
-      );
-    case "buttons":
-      return (
-        <div className="space-y-3">
-          <Label>Mensagem acima dos botões</Label>
-          <Textarea value={c.message ?? ""} onChange={(e) => update("message", e.target.value)} placeholder="Escolha uma opção:" rows={2} />
-          <Label>Botões</Label>
-          {(c.buttons ?? []).map((btn: any, i: number) => (
-            <div key={i} className="flex gap-2">
-              <Input
-                value={btn.label}
-                onChange={(e) => {
-                  const newBtns = [...(c.buttons ?? [])];
-                  newBtns[i] = { ...newBtns[i], label: e.target.value };
-                  update("buttons", newBtns);
-                }}
-                placeholder={`Botão ${i + 1}`}
-              />
-              <Button size="icon" variant="ghost" className="text-destructive shrink-0" onClick={() => {
-                const newBtns = (c.buttons ?? []).filter((_: any, j: number) => j !== i);
-                update("buttons", newBtns);
-              }}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-          <Button variant="outline" size="sm" onClick={() => {
-            const newBtns = [...(c.buttons ?? []), { label: `Opção ${(c.buttons?.length ?? 0) + 1}`, value: String((c.buttons?.length ?? 0) + 1) }];
-            update("buttons", newBtns);
-          }}>
-            <Plus className="mr-1 h-3 w-3" />Adicionar Botão
-          </Button>
-        </div>
-      );
-    case "input":
-      return (
-        <div className="space-y-3">
-          <Label>Nome da Variável</Label>
-          <Input value={c.variable ?? ""} onChange={(e) => update("variable", e.target.value)} placeholder="nome" />
-          <Label>Placeholder</Label>
-          <Input value={c.placeholder ?? ""} onChange={(e) => update("placeholder", e.target.value)} placeholder="Digite aqui..." />
-          <Label>Tipo</Label>
-          <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={c.inputType ?? "text"} onChange={(e) => update("inputType", e.target.value)}>
-            <option value="text">Texto</option>
-            <option value="email">Email</option>
-            <option value="phone">Telefone</option>
-            <option value="number">Número</option>
-          </select>
-        </div>
-      );
-    case "delay":
-      return (
-        <div className="space-y-3">
-          <Label>Tempo de espera (segundos)</Label>
-          <Input type="number" min={1} max={30} value={c.seconds ?? 2} onChange={(e) => update("seconds", Number(e.target.value))} />
-        </div>
-      );
-    default:
-      return <p className="text-muted-foreground">Tipo de bloco desconhecido</p>;
-  }
 }
