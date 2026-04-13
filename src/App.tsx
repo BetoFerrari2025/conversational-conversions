@@ -19,6 +19,7 @@ import Leads from "./pages/dashboard/Leads";
 import Analytics from "./pages/dashboard/Analytics";
 import DashboardSettings from "./pages/dashboard/DashboardSettings";
 import Profile from "./pages/dashboard/Profile";
+import PublicFunnel from "./pages/PublicFunnel";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/f/:slug" element={<PublicFunnel />} />
               <Route
                 path="/dashboard"
                 element={
