@@ -169,6 +169,7 @@ export default function FunnelBuilder() {
               </Button>
             ))}
           </div>
+          <FunnelTemplates onSelect={applyTemplate} />
         </div>
 
         <div className="space-y-3">
