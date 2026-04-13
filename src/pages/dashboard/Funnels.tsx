@@ -117,7 +117,12 @@ export default function Funnels() {
                 <Badge className={statusColor(funnel.status)}>{funnel.status}</Badge>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Link to={`/dashboard/funnels/${funnel.id}/builder`}>
+                    <Button size="sm" variant="default">
+                      <Pencil className="mr-1 h-3 w-3" />Editar
+                    </Button>
+                  </Link>
                   <Button size="sm" variant="outline" onClick={() => copyLink(funnel.slug)}>
                     <Copy className="mr-1 h-3 w-3" />Link
                   </Button>
