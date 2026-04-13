@@ -1,6 +1,5 @@
-import { Zap, LayoutDashboard, GitBranch, Users, BarChart3, Settings, LogOut, MessageSquare } from "lucide-react";
+import { Zap, LayoutDashboard, GitBranch, Users, BarChart3, Settings, LogOut, MessageSquare, UserCircle } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
@@ -23,13 +22,13 @@ const menuItems = [
   { title: "Chat Preview", url: "/dashboard/chat-preview", icon: MessageSquare },
   { title: "Leads", url: "/dashboard/leads", icon: Users },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
+  { title: "Perfil", url: "/dashboard/profile", icon: UserCircle },
   { title: "Configurações", url: "/dashboard/settings", icon: Settings },
 ];
 
 export function DashboardSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
   const { signOut } = useAuth();
 
   return (
