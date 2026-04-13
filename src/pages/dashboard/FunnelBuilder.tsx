@@ -14,6 +14,7 @@ import type { Json } from "@/integrations/supabase/types";
 import { BLOCK_TYPES, defaultContent, type FunnelBlock } from "@/components/funnel-builder/BlockTypes";
 import { BlockPreview } from "@/components/funnel-builder/BlockPreview";
 import { BlockEditor } from "@/components/funnel-builder/BlockEditor";
+import { FunnelTemplates } from "@/components/funnel-builder/FunnelTemplates";
 
 export default function FunnelBuilder() {
   const { funnelId } = useParams();
@@ -107,6 +108,26 @@ export default function FunnelBuilder() {
     setBlocks(newBlocks);
     dragItem.current = null;
     dragOverItem.current = null;
+  };
+
+  const applyTemplate = async (templateBlocks: Array<{ type: string; content: Record<string, any> }>) => {
+    if (!funnelId) return;
+    // Delete existing blocks
+    for (const b of blocks) {
+      await supabase.from("funnel_blocks").delete().eq("id", b.id);
+    }
+    const newBlocks: FunnelBlock[] = [];
+    for (let i = 0; i < templateBlocks.length; i++) {
+      const { type, content } = templateBlocks[i];
+      const { data } = await supabase
+        .from("funnel_blocks")
+        .insert({ funnel_id: funnelId, type, content: content as Json, sort_order: i })
+        .select()
+        .single();
+      if (data) newBlocks.push({ ...data, content: (data.content as Record<string, any>) ?? {} });
+    }
+    setBlocks(newBlocks);
+    toast({ title: "Template aplicado com sucesso!" });
   };
 
   const blockMeta = (type: string) => BLOCK_TYPES.find(b => b.type === type);
