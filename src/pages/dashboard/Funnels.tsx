@@ -54,7 +54,7 @@ export default function Funnels() {
   };
 
   const copyLink = (slug: string) => {
-    navigator.clipboard.writeText(`${window.location.origin}/funnel/${slug}`);
+    navigator.clipboard.writeText(`${window.location.origin}/f/${slug}`);
     toast({ title: "Link copiado!" });
   };
 
@@ -126,7 +126,7 @@ export default function Funnels() {
                   <Button size="sm" variant="outline" onClick={() => copyLink(funnel.slug)}>
                     <Copy className="mr-1 h-3 w-3" />Link
                   </Button>
-                  <Link to={`/funnel/${funnel.slug}`} target="_blank">
+                  <Link to={`/f/${funnel.slug}`} target="_blank">
                     <Button size="sm" variant="outline">
                       <ExternalLink className="mr-1 h-3 w-3" />Ver
                     </Button>
