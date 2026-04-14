@@ -1,0 +1,1 @@
+ALTER TABLE public.user_presence ADD CONSTRAINT user_presence_user_id_key UNIQUE (user_id);
