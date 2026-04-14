@@ -19,6 +19,7 @@ import Leads from "./pages/dashboard/Leads";
 import Analytics from "./pages/dashboard/Analytics";
 import DashboardSettings from "./pages/dashboard/DashboardSettings";
 import Profile from "./pages/dashboard/Profile";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import PublicFunnel from "./pages/PublicFunnel";
 
 const queryClient = new QueryClient();
