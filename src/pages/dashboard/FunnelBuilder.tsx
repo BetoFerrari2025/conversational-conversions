@@ -299,26 +299,26 @@ export default function FunnelBuilder() {
       </div>
 
       {/* Block Editor Dialog */}
-      <Dialog open={!!editingBlock} onOpenChange={(open) => { if (!open) setEditingBlock(null); }}>
-        <DialogContent className="glass max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Editar Bloco - {blockMeta(editingBlock?.type ?? "")?.label}</DialogTitle>
-            <p className="text-sm text-muted-foreground">Edite o conteúdo do bloco abaixo</p>
-          </DialogHeader>
-          {editingBlock && (
+      {editingBlock && (
+        <Dialog open onOpenChange={(open) => { if (!open) setEditingBlock(null); }}>
+          <DialogContent className="glass max-w-lg" aria-describedby="edit-block-desc">
+            <DialogHeader>
+              <DialogTitle>Editar Bloco - {blockMeta(editingBlock.type)?.label}</DialogTitle>
+              <p id="edit-block-desc" className="text-sm text-muted-foreground">Edite o conteúdo do bloco abaixo</p>
+            </DialogHeader>
             <BlockEditor
               block={editingBlock}
               onChange={(content) => updateBlockContent(editingBlock.id, content)}
             />
-          )}
-          <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={() => setEditingBlock(null)}>Cancelar</Button>
-            <Button onClick={() => { saveAll(); setEditingBlock(null); }}>
-              <Save className="mr-2 h-4 w-4" />Salvar
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setEditingBlock(null)}>Cancelar</Button>
+              <Button onClick={async () => { await saveAll(); setEditingBlock(null); }}>
+                <Save className="mr-2 h-4 w-4" />Salvar
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Preview Dialog */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
