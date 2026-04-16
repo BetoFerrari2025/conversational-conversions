@@ -243,7 +243,8 @@ export default function PublicFunnel() {
     "#00a884";
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: appearance.bgColor }}>
+    <div className="min-h-screen flex items-stretch md:items-center justify-center md:p-4" style={{ backgroundColor: appearance.bgColor }}>
+      <div className="w-full md:max-w-md md:rounded-2xl md:shadow-2xl md:overflow-hidden flex flex-col min-h-screen md:min-h-0 md:h-[90vh] md:border md:border-white/5" style={{ backgroundColor: appearance.bgColor }}>
       <div className="px-4 py-3 flex items-center gap-3 border-b border-white/10" style={{ background: headerBg }}>
         {attendantPhoto ? (
           <img src={attendantPhoto} alt="" className="w-10 h-10 rounded-full object-cover" />
