@@ -21,9 +21,25 @@ export function LivePhonePreview({
   blocks, funnelName, attendantPhoto, appearance, landingPage,
   previewMode, onTogglePreview,
 }: LivePhonePreviewProps) {
-  const headerBg = appearance.chatStyle === "messenger" ? "#0084ff"
-    : appearance.chatStyle === "direct" ? "#262626"
-    : "#1f2c34";
+  const style = appearance.chatStyle;
+
+  const headerBg =
+    style === "messenger" ? "#0084ff" :
+    style === "direct" ? "#262626" :
+    style === "default" ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.7))" :
+    "#1f2c34"; // whatsapp
+
+  const bubbleRadius =
+    style === "messenger" ? "rounded-2xl rounded-bl-md" :
+    style === "direct" ? "rounded-3xl rounded-bl-sm" :
+    style === "default" ? "rounded-xl rounded-bl-none" :
+    "rounded-lg rounded-bl-none"; // whatsapp
+
+  const buttonBubbleColor =
+    style === "messenger" ? "#0084ff" :
+    style === "direct" ? "#3a3a3a" :
+    style === "default" ? "hsl(var(--primary))" :
+    "#00a884";
 
   const showLanding = landingPage.enabled && previewMode === "landing";
 
