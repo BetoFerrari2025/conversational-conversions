@@ -106,9 +106,15 @@ export default function FunnelBuilder() {
   };
 
   const deleteBlock = async (id: string) => {
-    await supabase.from("funnel_blocks").delete().eq("id", id);
-    setBlocks(prev => prev.filter(b => b.id !== id));
+    // Collapse first to unmount any media elements (audio/video/img) before removing the node,
+    // avoiding "removeChild" DOM reconciliation errors from controlled media elements.
     if (expandedBlock === id) setExpandedBlock(null);
+    setBlocks(prev => prev.filter(b => b.id !== id));
+    const { error } = await supabase.from("funnel_blocks").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erro ao remover", description: error.message, variant: "destructive" });
+      return;
+    }
     toast({ title: "Bloco removido" });
   };
 
