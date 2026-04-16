@@ -21,9 +21,25 @@ export function LivePhonePreview({
   blocks, funnelName, attendantPhoto, appearance, landingPage,
   previewMode, onTogglePreview,
 }: LivePhonePreviewProps) {
-  const headerBg = appearance.chatStyle === "messenger" ? "#0084ff"
-    : appearance.chatStyle === "direct" ? "#262626"
-    : "#1f2c34";
+  const style = appearance.chatStyle;
+
+  const headerBg =
+    style === "messenger" ? "#0084ff" :
+    style === "direct" ? "#262626" :
+    style === "default" ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.7))" :
+    "#1f2c34"; // whatsapp
+
+  const bubbleRadius =
+    style === "messenger" ? "rounded-2xl rounded-bl-md" :
+    style === "direct" ? "rounded-3xl rounded-bl-sm" :
+    style === "default" ? "rounded-xl rounded-bl-none" :
+    "rounded-lg rounded-bl-none"; // whatsapp
+
+  const buttonBubbleColor =
+    style === "messenger" ? "#0084ff" :
+    style === "direct" ? "#3a3a3a" :
+    style === "default" ? "hsl(var(--primary))" :
+    "#00a884";
 
   const showLanding = landingPage.enabled && previewMode === "landing";
 
@@ -94,7 +110,7 @@ export function LivePhonePreview({
           /* Chat Preview */
           <>
             {/* Header */}
-            <div className="px-4 py-3 flex items-center gap-3" style={{ backgroundColor: headerBg }}>
+            <div className="px-4 py-3 flex items-center gap-3" style={{ background: headerBg }}>
               {attendantPhoto ? (
                 <img src={attendantPhoto} alt="" className="w-9 h-9 rounded-full object-cover" />
               ) : (
@@ -131,10 +147,10 @@ export function LivePhonePreview({
                   return (
                     <div key={i} className="flex justify-start">
                       <div
-                        className="max-w-[85%] rounded-lg px-3 py-2 text-[13px] text-white rounded-bl-none"
+                        className={`max-w-[85%] px-3 py-2 text-[13px] text-white ${bubbleRadius}`}
                         style={{ backgroundColor: appearance.balloonColor }}
                       >
-                        <ChatBubbleContent block={block} />
+                        <ChatBubbleContent block={block} buttonColor={buttonBubbleColor} />
                       </div>
                     </div>
                   );
@@ -158,7 +174,7 @@ export function LivePhonePreview({
   );
 }
 
-function ChatBubbleContent({ block }: { block: FunnelBlock }) {
+function ChatBubbleContent({ block, buttonColor = "#00a884" }: { block: FunnelBlock; buttonColor?: string }) {
   const c = block.content;
   switch (block.type) {
     case "text":
@@ -175,7 +191,11 @@ function ChatBubbleContent({ block }: { block: FunnelBlock }) {
           {c.message && <p className="mb-2">{c.message}</p>}
           <div className="flex flex-col gap-1">
             {(c.buttons ?? []).map((btn: any, i: number) => (
-              <span key={i} className="px-3 py-1.5 rounded bg-white/10 text-[#00a884] text-xs text-center">
+              <span
+                key={i}
+                className="px-3 py-1.5 rounded text-xs text-center text-white"
+                style={{ backgroundColor: buttonColor }}
+              >
                 {btn.label}
               </span>
             ))}
