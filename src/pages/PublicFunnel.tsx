@@ -311,6 +311,7 @@ export default function PublicFunnel() {
           <p className="text-white/60 text-sm">✅ Conversa finalizada</p>
         </div>
       )}
+      </div>
     </div>
   );
 }
