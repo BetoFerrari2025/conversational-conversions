@@ -6,19 +6,11 @@ export function BlockPreview({ block }: { block: FunnelBlock }) {
     case "text":
       return <p className="text-sm text-muted-foreground truncate">{c.message || "Mensagem vazia..."}</p>;
     case "image":
-      return c.url ? (
-        <img src={c.url} alt={c.caption || "Imagem"} className="rounded max-h-16 object-cover" />
-      ) : (
-        <p className="text-sm text-muted-foreground">Sem imagem</p>
-      );
+      return <p className="text-sm text-muted-foreground truncate">{c.url ? "🖼 Imagem carregada" : "Sem imagem"}</p>;
     case "video":
       return <p className="text-sm text-muted-foreground truncate">{c.url ? "🎬 Vídeo carregado" : "Sem vídeo"}</p>;
     case "audio":
-      return c.url ? (
-        <audio src={c.url} controls className="h-8 w-full max-w-[200px]" />
-      ) : (
-        <p className="text-sm text-muted-foreground">Sem áudio</p>
-      );
+      return <p className="text-sm text-muted-foreground truncate">{c.url ? "🔊 Áudio carregado" : "Sem áudio"}</p>;
     case "buttons":
       return (
         <div className="flex flex-wrap gap-1">
