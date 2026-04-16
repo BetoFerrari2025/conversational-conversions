@@ -76,21 +76,33 @@ export function BlockEditor({ block, onChange }: BlockEditorProps) {
           <Textarea value={c.message ?? ""} onChange={(e) => update("message", e.target.value)} placeholder="Escolha uma opção:" rows={2} />
           <Label>Botões</Label>
           {(c.buttons ?? []).map((btn: any, i: number) => (
-            <div key={i} className="flex gap-2">
+            <div key={i} className="space-y-2 p-2 rounded-md border border-border/40 bg-background/40">
+              <div className="flex gap-2">
+                <Input
+                  value={btn.label}
+                  onChange={(e) => {
+                    const newBtns = [...(c.buttons ?? [])];
+                    newBtns[i] = { ...newBtns[i], label: e.target.value };
+                    update("buttons", newBtns);
+                  }}
+                  placeholder={`Texto do botão ${i + 1}`}
+                />
+                <Button size="icon" variant="ghost" className="text-destructive shrink-0" onClick={() => {
+                  update("buttons", (c.buttons ?? []).filter((_: any, j: number) => j !== i));
+                }}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
               <Input
-                value={btn.label}
+                value={btn.link ?? ""}
                 onChange={(e) => {
                   const newBtns = [...(c.buttons ?? [])];
-                  newBtns[i] = { ...newBtns[i], label: e.target.value };
+                  newBtns[i] = { ...newBtns[i], link: e.target.value };
                   update("buttons", newBtns);
                 }}
-                placeholder={`Botão ${i + 1}`}
+                placeholder="Link (opcional) - https://..."
+                className="text-xs"
               />
-              <Button size="icon" variant="ghost" className="text-destructive shrink-0" onClick={() => {
-                update("buttons", (c.buttons ?? []).filter((_: any, j: number) => j !== i));
-              }}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
             </div>
           ))}
           <Button variant="outline" size="sm" onClick={() => {
