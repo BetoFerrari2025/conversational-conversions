@@ -182,34 +182,36 @@ export default function PublicFunnel() {
   // ----- Landing Page -----
   if (showLanding) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: landingPage.bgColor }}>
-        {landingPage.heroImageUrl ? (
-          <div className="flex-1 relative flex flex-col">
-            <img src={landingPage.heroImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-            <div className="relative mt-auto p-8 max-w-md mx-auto w-full text-center">
-              {landingPage.title && <h1 className="text-white font-bold text-3xl mb-3">{landingPage.title}</h1>}
-              {landingPage.subtitle && <p className="text-white/80 text-base mb-6">{landingPage.subtitle}</p>}
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: landingPage.bgColor }}>
+        <div className="w-full max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ backgroundColor: landingPage.bgColor }}>
+          {landingPage.heroImageUrl ? (
+            <div className="relative w-full aspect-[4/5] flex flex-col">
+              <img src={landingPage.heroImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+              <div className="relative mt-auto p-6 w-full text-center">
+                {landingPage.title && <h1 className="text-white font-bold text-2xl md:text-3xl mb-2">{landingPage.title}</h1>}
+                {landingPage.subtitle && <p className="text-white/80 text-sm md:text-base mb-5">{landingPage.subtitle}</p>}
+                <button
+                  onClick={() => setShowLanding(false)}
+                  className="w-full py-3.5 rounded-xl bg-white text-black font-semibold hover:scale-[1.02] transition-transform"
+                >
+                  {landingPage.ctaText || "Iniciar Conversa"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-8 text-center">
+              {landingPage.title && <h1 className="text-white font-bold text-2xl md:text-3xl mb-2">{landingPage.title}</h1>}
+              {landingPage.subtitle && <p className="text-white/70 text-sm md:text-base mb-6">{landingPage.subtitle}</p>}
               <button
                 onClick={() => setShowLanding(false)}
-                className="w-full py-4 rounded-xl bg-white text-black font-semibold hover:scale-[1.02] transition-transform"
+                className="w-full py-3.5 rounded-xl bg-white text-black font-semibold hover:scale-[1.02] transition-transform"
               >
                 {landingPage.ctaText || "Iniciar Conversa"}
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto">
-            {landingPage.title && <h1 className="text-white font-bold text-3xl mb-3">{landingPage.title}</h1>}
-            {landingPage.subtitle && <p className="text-white/70 text-base mb-8">{landingPage.subtitle}</p>}
-            <button
-              onClick={() => setShowLanding(false)}
-              className="w-full py-4 rounded-xl bg-white text-black font-semibold hover:scale-[1.02] transition-transform"
-            >
-              {landingPage.ctaText || "Iniciar Conversa"}
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
@@ -241,7 +243,8 @@ export default function PublicFunnel() {
     "#00a884";
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: appearance.bgColor }}>
+    <div className="min-h-screen flex items-stretch md:items-center justify-center md:p-4" style={{ backgroundColor: appearance.bgColor }}>
+      <div className="w-full md:max-w-md md:rounded-2xl md:shadow-2xl md:overflow-hidden flex flex-col min-h-screen md:min-h-0 md:h-[90vh] md:border md:border-white/5" style={{ backgroundColor: appearance.bgColor }}>
       <div className="px-4 py-3 flex items-center gap-3 border-b border-white/10" style={{ background: headerBg }}>
         {attendantPhoto ? (
           <img src={attendantPhoto} alt="" className="w-10 h-10 rounded-full object-cover" />
@@ -308,6 +311,7 @@ export default function PublicFunnel() {
           <p className="text-white/60 text-sm">✅ Conversa finalizada</p>
         </div>
       )}
+      </div>
     </div>
   );
 }

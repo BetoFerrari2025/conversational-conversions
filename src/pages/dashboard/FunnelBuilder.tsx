@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Save, Plus, Trash2, GripVertical,
-  ChevronUp, ChevronDown, Pencil, Copy, Settings, Palette, FileText
+  ChevronUp, ChevronDown, Pencil, Copy, Settings, Palette, FileText, LayoutTemplate
 } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
 import { BLOCK_TYPES, defaultContent, type FunnelBlock } from "@/components/funnel-builder/BlockTypes";
@@ -252,14 +252,17 @@ export default function FunnelBuilder() {
         {/* Left sidebar */}
         <div className="w-[260px] border-r border-border/50 bg-card/30 overflow-y-auto flex-shrink-0">
           <Tabs value={sidebarTab} onValueChange={setSidebarTab} className="h-full flex flex-col">
-            <TabsList className="w-full rounded-none border-b border-border/50 bg-transparent h-10 flex-shrink-0">
-              <TabsTrigger value="elements" className="flex-1 text-xs data-[state=active]:bg-primary/10">
+            <TabsList className="w-full rounded-none border-b border-border/50 bg-transparent h-10 flex-shrink-0 grid grid-cols-4">
+              <TabsTrigger value="elements" className="text-[11px] data-[state=active]:bg-primary/10 px-1">
                 <Plus className="h-3 w-3 mr-1" />Elementos
               </TabsTrigger>
-              <TabsTrigger value="appearance" className="flex-1 text-xs data-[state=active]:bg-primary/10">
+              <TabsTrigger value="appearance" className="text-[11px] data-[state=active]:bg-primary/10 px-1">
                 <Palette className="h-3 w-3 mr-1" />Aparência
               </TabsTrigger>
-              <TabsTrigger value="config" className="flex-1 text-xs data-[state=active]:bg-primary/10">
+              <TabsTrigger value="landing" className="text-[11px] data-[state=active]:bg-primary/10 px-1">
+                <LayoutTemplate className="h-3 w-3 mr-1" />Página
+              </TabsTrigger>
+              <TabsTrigger value="config" className="text-[11px] data-[state=active]:bg-primary/10 px-1">
                 <Settings className="h-3 w-3 mr-1" />Config
               </TabsTrigger>
             </TabsList>
@@ -285,6 +288,10 @@ export default function FunnelBuilder() {
               <AppearanceSettings settings={appearance} onChange={setAppearance} />
             </TabsContent>
 
+            <TabsContent value="landing" className="flex-1 overflow-y-auto p-3 mt-0">
+              <LandingPageEditor settings={landingPage} onChange={setLandingPage} />
+            </TabsContent>
+
             <TabsContent value="config" className="flex-1 overflow-y-auto p-3 space-y-4 mt-0">
               <div className="space-y-2 p-3 rounded-lg border border-border/50 bg-card">
                 <Label className="text-xs text-muted-foreground uppercase tracking-wider">Foto do Atendente</Label>
@@ -296,7 +303,6 @@ export default function FunnelBuilder() {
                   preview="image"
                 />
               </div>
-              <LandingPageEditor settings={landingPage} onChange={setLandingPage} />
             </TabsContent>
           </Tabs>
         </div>
