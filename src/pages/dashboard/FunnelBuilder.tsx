@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Save, Plus, Trash2, GripVertical,
-  ChevronUp, ChevronDown, Pencil, Copy, Settings, Palette, FileText
+  ChevronUp, ChevronDown, Pencil, Copy, Settings, Palette, FileText, LayoutTemplate
 } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
 import { BLOCK_TYPES, defaultContent, type FunnelBlock } from "@/components/funnel-builder/BlockTypes";
